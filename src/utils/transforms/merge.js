@@ -17,10 +17,11 @@ export const MergeTransform = {
 
 		const newRows = {};
 		rows.forEach((row) => {
-			if (options.choose === 'first' && newRows[row[options.column]]) {
-				return;
+			if (options.choose === 'first') {
+				newRows[row[options.column]] = { ...row, ...(newRows[row[options.column]] || {}) };
+			} else {
+				newRows[row[options.column]] = { ...(newRows[row[options.column]] || {}), ...row };
 			}
-			newRows[row[options.column]] = row;
 		});
 
 		return Object.values(newRows);
