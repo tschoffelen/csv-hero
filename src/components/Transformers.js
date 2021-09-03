@@ -6,7 +6,7 @@ import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import AddTransformButton from './AddTransformButton';
 import { transformDefinitions } from '../utils/transforms';
 
-const Transformers = ({ transforms, setTransforms }) => {
+const Transformers = ({ transforms, setTransforms, availableColumns }) => {
 	const [openPanel, setOpenPanel] = useState(null);
 
 	const addTransform = (transform) => {
@@ -91,7 +91,8 @@ const Transformers = ({ transforms, setTransforms }) => {
 													<div className="border-t border-gray-200 p-3 mt-1 pb-2 overflow-hidden relative text-sm">
 														{transform.controls({
 															options: transformConfig.options,
-															setOptions: setTransformOptions(transformConfig.id)
+															setOptions: setTransformOptions(transformConfig.id),
+															availableColumns
 														})}
 													</div>
 												)}

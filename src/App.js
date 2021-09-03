@@ -15,6 +15,7 @@ function App() {
 	const [processedData, setProcessedData] = useState(null);
 	const [id, setId] = useState(() => uuid());
 	const [transforms, setTransforms] = useState([]);
+	const [availableColumns, setAvailableColumns] = useState([]);
 
 	const setTransformOptions = (transformId) => {
 		return (newOptions) => {
@@ -45,7 +46,15 @@ function App() {
 			}
 			return sourceData;
 		}, data);
+
 		setProcessedData(finalData);
+		setAvailableColumns(finalData[0] && typeof finalData[0] === 'object'
+			? Object
+				.keys(finalData[0])
+				.filter((field) => field !== '__internal_id')
+				.map((field) => field)
+			: []);
+
 		setId(uuid());
 	}, [data, transforms]);
 
@@ -70,8 +79,13 @@ function App() {
 					</section>
 					{data && (
 						<>
-							<Transformers transforms={transforms} setTransforms={setTransforms} />
-							<Export rowsCount={processedData && processedData.length} onExport={(exportFormat) => downloadDataAs(processedData, exportFormat)}/>
+							<Transformers
+								transforms={transforms}
+								setTransforms={setTransforms}
+								availableColumns={availableColumns}/>
+							<Export
+								rowsCount={processedData && processedData.length}
+								onExport={(exportFormat) => downloadDataAs(processedData, exportFormat)}/>
 						</>
 					)}
 				</aside>
