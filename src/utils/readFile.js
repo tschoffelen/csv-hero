@@ -62,7 +62,9 @@ export const processData = (data) => {
 			__internal_id: uuid()
 		};
 		Object.entries(row).forEach(([key, value]) => {
-			newRow[key] = typeof value === 'object' ? JSON.stringify(value) : value;
+			if(key in defaultFields) {
+				newRow[key] = typeof value === 'object' ? JSON.stringify(value) : value;
+			}
 		});
 
 		return newRow;

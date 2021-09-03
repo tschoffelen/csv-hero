@@ -1,17 +1,53 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import GridTable from '@nadavshaar/react-grid-table';
 import DragAndDrop from './components/DragAndDrop';
-import { ArrowUp, Folder, PlusCircle } from 'react-feather';
 import { v4 as uuid } from 'uuid';
 
 import { downloadDataAs } from './utils/download';
 import { processData, readFile } from './utils/readFile';
 import Export from './components/Export';
+import { transformDefinitions } from './utils/transforms';
+import Transformers from './components/Transformers';
 
 function App() {
 	const [file, setFile] = useState(null);
 	const [data, setData] = useState(null);
+	const [processedData, setProcessedData] = useState(null);
 	const [id, setId] = useState(() => uuid());
+	const [transforms, setTransforms] = useState([]);
+
+	const setTransformOptions = (transformId) => {
+		return (newOptions) => {
+			setTransforms((transforms) => transforms.map((transform) => transform.id === transformId ? {
+				...transform,
+				options: { ...transform.options, ...newOptions }
+			} : transform));
+		};
+	};
+
+	useEffect(() => {
+		if (!data) {
+			return;
+		}
+
+		// TODO: should we add a debounce here?
+
+		let sourceData = [...data.map((row) => ({ ...row }))];
+		const finalData = transforms.reduce((data, transformConfig) => {
+			// TODO: this lookup is not ideal
+			const setOptions = setTransformOptions(transformConfig.id);
+			const transform = transformDefinitions.find(({ id }) => id === transformConfig.type);
+			if (transform.map) {
+				sourceData = sourceData.map((row) => transform.map(row, transformConfig.options, setOptions));
+			}
+			if (transform.transform) {
+				sourceData = [...transform.transform(sourceData, transformConfig.options, setOptions)];
+			}
+			return sourceData;
+		}, data);
+		setProcessedData(finalData);
+		setId(uuid());
+	}, [data, transforms]);
 
 	return (
 		<DragAndDrop handleDrop={async(file) => {
@@ -24,118 +60,49 @@ function App() {
 			setFile(file);
 			setId(uuid());
 		}}>
-			<aside>
-				<section>
-					<h3>Source</h3>
-					{file ? (
-						<div className="drag-and-drop current">
-							{file.name}
-						</div>
-					) : (
-						<div className="drag-and-drop">
-							Drop a CSV or JSON file
-						</div>
+			<div className="bg-white h-screen flex w-full">
+				<aside className="bg-gray-100 border-r border-gray-200 h-screen w-80 flex-0 flex flex-col">
+					<section className="p-5 border-b border-gray-200 flex items-center justify-between">
+						<h3 className="text-xs font-bold text-gray-600 uppercase">Source</h3>
+						<p className="text-sm">
+							{file ? file.name : 'Drop a CSV or JSON file to start'}
+						</p>
+					</section>
+					{data && (
+						<>
+							<Transformers transforms={transforms} setTransforms={setTransforms} />
+							<Export rowsCount={processedData && processedData.length} onExport={(exportFormat) => downloadDataAs(processedData, exportFormat)}/>
+						</>
 					)}
-				</section>
-				{data && (
-					<>
-						<section className="transform">
-							<PlusCircle className="section-button" size={16} color="#fff"/>
-							<Folder className="section-button" size={16} color="#fff"/>
-							<h3>Transform</h3>
-
-							<div className="item open">
-								<ArrowUp className="item-toggle"/>
-								<h4>Merge rows</h4>
-								<p className="label">Deduplicate based on field</p>
-								<div className="flex">
-									<select className="input flex-flex">
-										<option>gender</option>
-										<option>last visited</option>
-									</select>
-									<select className="input">
-										<option>use first row</option>
-										<option>use last row</option>
-									</select>
-								</div>
-							</div>
-
-							<div className="item open">
-								<ArrowUp className="item-toggle"/>
-								<h4>Filter rows</h4>
-								<p className="label">Column filter condition</p>
-								<div className="flex">
-									<select className="input">
-										<option disabled>Field</option>
-										<option>gender</option>
-										<option>last visited</option>
-									</select>
-									<select className="input">
-										<option>=</option>
-										<option>!=</option>
-										<option>&gt;</option>
-										<option>&lt;</option>
-										<option>&gt;=</option>
-										<option>&lt;=</option>
-									</select>
-									<input className="input flex-flex" placeholder="value"/>
-								</div>
-							</div>
-
-							<div className="item open">
-								<ArrowUp className="item-toggle"/>
-								<h4>Filter columns</h4>
-								<p className="label">Column names</p>
-								<div className="flex">
-									<input className="input flex-flex" placeholder="column1,column2"/>
-								</div>
-							</div>
-
-							<div className="item open">
-								<ArrowUp className="item-toggle"/>
-								<h4>Sort by</h4>
-								<p className="label">Field sorting</p>
-								<div className="flex">
-									<select className="input flex-flex">
-										<option disabled>Field</option>
-										<option>gender</option>
-										<option>last visited</option>
-									</select>
-									<select className="input">
-										<option>ASC numeric</option>
-										<option>DESC numeric</option>
-										<option>ASC string</option>
-										<option>DESC string</option>
-									</select>
-								</div>
-							</div>
-
-						</section>
-						<Export onExport={(exportFormat) => downloadDataAs(data, exportFormat)}/>
-					</>
-				)}
-			</aside>
-			<main>
-				{data ? (
-					<GridTable
-						key={id}
-						rowIdField="__internal_id"
-						columns={
-							Object
-								.keys(data[0])
-								.filter((field) => field !== '__internal_id')
-								.map((field, id) => ({
-									id,
-									field,
-									label: `${field} (${typeof data[0][field]})`
-								}))
-						}
-						rows={data}
-					/>
-				) : (
-					<span/>
-				)}
-			</main>
+				</aside>
+				<main className="flex-1 h-screen text-sm" style={{ maxWidth: (window.innerWidth - 320) }}>
+					{processedData ? (
+						<GridTable
+							key={id}
+							rowIdField="__internal_id"
+							enableColumnsReorder={false}
+							showRowsInformation={false}
+							showSearch={false}
+							showColumnVisibilityManager={false}
+							columns={
+								processedData[0] && typeof processedData[0] === 'object'
+									? Object
+										.keys(processedData[0])
+										.filter((field) => field !== '__internal_id')
+										.map((field, id) => ({
+											id,
+											field,
+											label: `${field} (${typeof processedData[0][field]})`
+										}))
+									: []
+							}
+							rows={processedData}
+						/>
+					) : (
+						<span/>
+					)}
+				</main>
+			</div>
 		</DragAndDrop>
 	);
 }

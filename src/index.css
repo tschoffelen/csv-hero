@@ -1,0 +1,40 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html, body {
+    overflow: hidden;
+}
+
+.CodeMirror {
+    font-size: 12px;
+    border-radius: 0.375rem;
+    margin: 0;
+}
+
+.CodeMirror-scroll {
+    min-height: 100px;
+}
+
+.cm-s-neo .CodeMirror-cursor {
+    width: 1px;
+    background: #000;
+}
+
+.rgt-wrapper {
+    border: 0;
+}
+
+.rgt-cell-header {
+    min-height: 3.75rem;
+    max-height: 3.75rem;
+}
+
+.rgt-footer-pagination-button {
+    @apply bg-indigo-600;
+    box-shadow: none;
+}
+
+.rgt-cell-header-inner {
+    font-weight: 600;
+}
