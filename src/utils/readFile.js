@@ -52,7 +52,7 @@ export const processData = (data) => {
 		Object.keys(row)
 			.map((key) => `${key}`.trim())
 			.filter(Boolean)
-			.forEach((key) => defaultFields[key] = null);
+			.forEach((key) => defaultFields[key] = '');
 	});
 
 	// Add IDs and normalize column headings
