@@ -1,4 +1,5 @@
 import { GitMerge } from 'react-feather';
+
 import Select from '../../components/form/Select';
 
 export const MergeTransform = {
@@ -29,7 +30,7 @@ export const MergeTransform = {
 			<Select
 				value={options.column}
 				onChange={(e) => setOptions({ column: e.target.value })}
-				className="mr-2"
+				className="mr-2 flex-1"
 			>
 				<option value="">Select a column</option>
 				{availableColumns.map((option) => (

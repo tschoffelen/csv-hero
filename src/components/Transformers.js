@@ -88,7 +88,7 @@ const Transformers = ({ transforms, setTransforms, availableColumns }) => {
 														className="w-4 h-4 cursor-pointer text-gray-500 hover:text-gray-800 ml-3"/>
 												</div>
 												{open && transform.controls && (
-													<div className="border-t border-gray-200 p-3 mt-1 pb-2 overflow-hidden relative text-sm">
+													<div className="p-3 pt-1 pb-2 overflow-hidden relative text-sm">
 														{transform.controls({
 															options: transformConfig.options,
 															setOptions: setTransformOptions(transformConfig.id),

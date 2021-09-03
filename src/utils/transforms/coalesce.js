@@ -1,5 +1,7 @@
 import { Copy } from 'react-feather';
 
+import Select from '../../components/form/Select';
+
 export const CoalesceTransform = {
 	id: 'coalesce',
 	title: 'Coalesce',
@@ -36,17 +38,17 @@ export const CoalesceTransform = {
 	},
 	controls: ({ options, setOptions, availableColumns }) => (
 		<div className="flex">
-			<select
+			<Select
 				value={options.column}
 				onChange={(e) => setOptions({ column: e.target.value })}
-				className="mr-3"
+				className="mr-2 flex-1"
 			>
 				<option value="">Select a column</option>
 				{availableColumns.map((option) => (
 					<option key={option}>{option}</option>
 				))}
-			</select>
-			<select
+			</Select>
+			<Select
 				value={options.type}
 				onChange={(e) => setOptions({ type: e.target.value })}
 			>
@@ -54,7 +56,7 @@ export const CoalesceTransform = {
 				<option>Float</option>
 				<option>String</option>
 				<option>Boolean</option>
-			</select>
+			</Select>
 		</div>
 	)
 };

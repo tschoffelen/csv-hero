@@ -21,6 +21,7 @@ export const FilterColumnsTransform = {
 				value={options.columns}
 				autoFocus
 				onChange={(e) => setOptions({ columns: e.target.value })}
+				className="rounded-md w-full text-sm bg-white outline-none h-9 px-2 border border-gray-200"
 				placeholder="column1, column2"/>
 		</>
 	)
@@ -49,6 +50,7 @@ export const FilterValuesTransform = {
 				value={options.search}
 				autoFocus
 				onChange={(e) => setOptions({ search: e.target.value })}
+				className="rounded-md w-full text-sm bg-white outline-none h-9 px-2 border border-gray-200"
 				placeholder="search term"/>
 		</>
 	)
