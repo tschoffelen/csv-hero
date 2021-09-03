@@ -26,7 +26,7 @@ const AddTransformButton = ({ onClick }) => (
 			leaveTo="transform opacity-0 scale-95"
 		>
 			<Menu.Items
-				className="absolute left-0 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
+				className="absolute z-20 left-0 right-0 mt-2 origin-top-right bg-white divide-y divide-gray-100 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none">
 				<div className="px-1 py-1">
 					{transformDefinitions.map((transform) => {
 							const Icon = transform.icon;
