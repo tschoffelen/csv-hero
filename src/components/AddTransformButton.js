@@ -31,7 +31,7 @@ const AddTransformButton = ({ onClick }) => (
 					{transformDefinitions.map((transform) => {
 							const Icon = transform.icon;
 							return (
-								<Menu.Item>
+								<Menu.Item key={transform.id}>
 									{({ active }) => (
 										<button
 											onClick={() => onClick(transform)}
