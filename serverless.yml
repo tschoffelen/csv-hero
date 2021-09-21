@@ -11,7 +11,7 @@ plugins:
 constructs:
   webapp:
     type: static-website
-    path: 'dist'
+    path: build
     domain: csvhero.schof.co
     certificate: arn:aws:acm:us-east-1:672895027413:certificate/ba73b576-3f22-44ce-a5be-888b3dfb72c3
 
