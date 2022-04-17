@@ -27,11 +27,11 @@ export const MergeTransform = {
 		return Object.values(newRows);
 	},
 	controls: ({ options, setOptions, availableColumns }) => (
-		<div className="flex">
+		<>
 			<Select
 				value={options.column}
 				onChange={(e) => setOptions({ column: e.target.value })}
-				className="mr-2 flex-1"
+				className="mb-2"
 			>
 				<option value="">Select a column</option>
 				{availableColumns.map((option) => (
@@ -45,6 +45,6 @@ export const MergeTransform = {
 				<option value="first">First match</option>
 				<option value="last">Last match</option>
 			</Select>
-		</div>
+		</>
 	)
 };

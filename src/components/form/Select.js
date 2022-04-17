@@ -3,7 +3,7 @@ import { ChevronDown } from 'react-feather';
 
 const Select = ({ value, children, onChange, className = '', ...props }) => {
 	return (
-		<div className={`relative flex ${className}`}>
+		<div className={`relative flex max-w-full ${className}`}>
 			<select
 				value={value}
 				onChange={onChange}

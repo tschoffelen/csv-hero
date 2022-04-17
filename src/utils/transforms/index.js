@@ -3,6 +3,7 @@ import { ArrayReverseTransform, ArrayShuffleTransform } from './array';
 import { CoalesceTransform } from './coalesce';
 import { MergeTransform } from './merge';
 import { JavascriptTransform } from './javascript';
+import { SortTransform } from './sort';
 
 export const transformDefinitions = [
 	FilterColumnsTransform,
@@ -10,6 +11,7 @@ export const transformDefinitions = [
 	ArrayReverseTransform,
 	ArrayShuffleTransform,
 	CoalesceTransform,
+	SortTransform,
 	MergeTransform,
 	JavascriptTransform
 ];
