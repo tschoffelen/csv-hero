@@ -7,7 +7,7 @@ const Select = ({ value, children, onChange, className = '', ...props }) => {
 			<select
 				value={value}
 				onChange={onChange}
-				className="rounded-md flex-1 text-sm bg-white appearance-none h-9 px-2 pr-6 border border-gray-200"
+				className="rounded-md flex-1 text-sm bg-white max-w-full appearance-none h-9 px-2 pr-6 border border-gray-200"
 				{...props}>
 				{children}
 			</select>

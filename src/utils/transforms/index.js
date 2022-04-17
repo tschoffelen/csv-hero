@@ -4,6 +4,7 @@ import { CoalesceTransform } from './coalesce';
 import { MergeTransform } from './merge';
 import { JavascriptTransform } from './javascript';
 import { SortTransform } from './sort';
+import { RenameTransform } from './rename';
 
 export const transformDefinitions = [
 	FilterColumnsTransform,
@@ -11,7 +12,8 @@ export const transformDefinitions = [
 	ArrayReverseTransform,
 	ArrayShuffleTransform,
 	CoalesceTransform,
+	RenameTransform,
 	SortTransform,
 	MergeTransform,
-	JavascriptTransform
+	JavascriptTransform,
 ];
