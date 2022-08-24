@@ -4,6 +4,14 @@ import 'codemirror/mode/javascript/javascript';
 import 'codemirror/theme/neo.css';
 import { AlertTriangle, Tool } from 'react-feather';
 
+const debounce = function(func, timeout = 300) {
+	let timer;
+	return (...args) => {
+		clearTimeout(timer);
+		timer = setTimeout(() => { func.apply(this, args); }, timeout);
+	};
+};
+
 export const JavascriptTransform = {
 	id: 'eval',
 	title: 'Javascript',
@@ -45,9 +53,9 @@ export const JavascriptTransform = {
 					autofocus: true,
 					tabSize: 3
 				}}
-				onChange={(editor) => {
+				onChange={debounce((editor) => {
 					setOptions({ script: editor.getValue() });
-				}}
+				})}
 			/>
 			{options.error && (
 				<div className="p-1 py-2 px-4 justify-center text-yellow-700 text-xs flex items-center">
