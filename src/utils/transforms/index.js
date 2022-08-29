@@ -5,11 +5,10 @@ import { MergeTransform } from './merge';
 import { JavascriptTransform } from './javascript';
 import { SortTransform } from './sort';
 import { RenameTransform } from './rename';
-import { GroupTransform } from './group';
 
 export const transformDefinitions = [
-	FilterColumnsTransform,
 	FilterValuesTransform,
+	FilterColumnsTransform,
 	ArrayReverseTransform,
 	ArrayShuffleTransform,
 	CoalesceTransform,
@@ -17,5 +16,4 @@ export const transformDefinitions = [
 	SortTransform,
 	MergeTransform,
 	JavascriptTransform,
-	GroupTransform
 ];

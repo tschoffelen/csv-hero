@@ -8,7 +8,8 @@ export const MergeTransform = {
 	icon: GitMerge,
 	defaultOptions: {
 		column: '',
-		choose: 'first'
+		choose: 'first',
+		addTotalsRow: false
 	},
 	transform: (rows, options) => {
 		if (!options.column) {
@@ -18,9 +19,15 @@ export const MergeTransform = {
 		const newRows = {};
 		rows.forEach((row) => {
 			if (options.choose === 'first') {
-				newRows[row[options.column]] = { ...row, ...(newRows[row[options.column]] || {}) };
+				newRows[row[options.column]] = {
+					...row, ...(newRows[row[options.column]] || {}),
+					...(options.addTotalsRow ? { total: (newRows[row[options.column]]?.total || 0) + 1 } : {})
+				};
 			} else {
-				newRows[row[options.column]] = { ...(newRows[row[options.column]] || {}), ...row };
+				newRows[row[options.column]] = {
+					...(newRows[row[options.column]] || {}), ...row,
+					...(options.addTotalsRow ? { total: (newRows[row[options.column]]?.total || 0) + 1 } : {})
+				};
 			}
 		});
 
@@ -45,6 +52,14 @@ export const MergeTransform = {
 				<option value="first">First match</option>
 				<option value="last">Last match</option>
 			</Select>
+			<label className="flex mt-3 gap-0.5 font-medium text-gray-700 items-center">
+				<input
+					type="checkbox"
+					checked={options.addTotalsRow}
+					onChange={(e) => setOptions({ addTotalsRow: e.target.checked })}
+				className="w-6 h-6"/>
+				Add total row
+			</label>
 		</>
 	)
 };
