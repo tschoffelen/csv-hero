@@ -1,17 +1,18 @@
 import React, { useEffect, useState } from "react";
 import GridTable from "@nadavshaar/react-grid-table";
-import DragAndDrop from "./components/DragAndDrop";
 import { v4 as uuid } from "uuid";
+import { Loader } from "react-feather";
+import axios from "axios";
+
+import DragAndDrop from "./components/DragAndDrop";
+import Export from "./components/Export";
+import Transformers from "./components/Transformers";
+import Placeholder from "./components/Placeholder";
 
 import { downloadDataAs } from "./utils/download";
 import { processData, readFile } from "./utils/readFile";
-import Export from "./components/Export";
 import { transformDefinitions } from "./utils/transforms";
-import Transformers from "./components/Transformers";
-import Placeholder from "./components/Placeholder";
 import { uploadData } from "./utils/cloud";
-import { Loader } from "react-feather";
-import axios from "axios";
 
 function App({ id: urlId }) {
   const [loading, setLoading] = useState(false);
@@ -38,9 +39,9 @@ function App({ id: urlId }) {
     }
     ;(async() => {
       setLoading(true);
-      const {data} = await axios.get(`https://schof.link/${urlId}`);
+      const { data } = await axios.get(`https://schof.link/${urlId}`);
       setData(data.data);
-      setFile({name: data.name});
+      setFile({ name: data.name });
       setTransforms(data.transforms);
       setLoading(false);
     })();
