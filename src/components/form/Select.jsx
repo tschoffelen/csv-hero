@@ -7,11 +7,11 @@ const Select = ({ value, children, onChange, className = '', ...props }) => {
 			<select
 				value={value}
 				onChange={onChange}
-				className="rounded-md flex-1 text-sm bg-white max-w-full appearance-none h-9 px-2 pr-6 border border-gray-200"
+				className="rounded-md flex-1 text-sm bg-white max-w-full focus:ring-0 focus:outline-0 focus:shadow-0 appearance-none h-10 px-3 pr-6 border border-gray-300"
 				{...props}>
 				{children}
 			</select>
-			<ChevronDown className="w-4 h-4 text-gray-400 absolute right-2 top-2.5 pointer-events-none"/>
+			<ChevronDown className="w-4 h-4 text-gray-400 absolute right-3 top-3 pointer-events-none"/>
 		</div>
 	);
 };
