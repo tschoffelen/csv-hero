@@ -76,7 +76,7 @@ const Transformers = ({ transforms, setTransforms, availableColumns, allColumns 
 														className="flex flex-1 text-sm font-medium items-center"
 														onClick={() => transform.controls && setOpenPanel((panel) => panel === transformConfig.id ? null : transformConfig.id)}>
 														<Icon className="w-4 h-4 mr-2"/>
-														{transform.title}
+														{index + 1}. {transform.title}
 													</h3>
 													{transform.controls && (
 														<Settings

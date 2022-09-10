@@ -1,21 +1,20 @@
-import { Type } from 'react-feather';
+import { PlusCircle } from "react-feather";
 
-export const RenameTransform = {
-	id: 'rename',
-	title: 'Rename column',
-	icon: Type,
+export const AddColumnTransform = {
+	id: 'add-column',
+	title: 'Add column',
+	icon: PlusCircle,
 	defaultOptions: {
 		column: '',
-		newName: ''
+		value: ''
 	},
 	map: (row, options) => {
-		if (!options.column || !(options.column in row) || !options.newName) {
+		if (!options.column || !options.value) {
 			return row;
 		}
 
 		const newRow = {...row};
-		newRow[options.newName] = row[options.column];
-		delete newRow[options.column];
+		newRow[options.column] = options.value;
 
 		return newRow;
 	},
@@ -27,14 +26,14 @@ export const RenameTransform = {
 				autoFocus
 				onChange={(e) => setOptions({ column: e.target.value })}
 				className="rounded-md w-full text-sm bg-white outline-none h-9 px-2 border border-gray-200 mb-2"
-				placeholder="old name"/>
+				placeholder="Column name"/>
 			<input
 				type="text"
-				value={options.newName}
+				value={options.value}
 				autoFocus
-				onChange={(e) => setOptions({ newName: e.target.value })}
+				onChange={(e) => setOptions({ value: e.target.value })}
 				className="rounded-md w-full text-sm bg-white outline-none h-9 px-2 border border-gray-200"
-				placeholder="new name"/>
+				placeholder="Value"/>
 		</>
 	)
 };
