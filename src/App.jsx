@@ -63,7 +63,7 @@ function App({ id: urlId }) {
         data = data.map((row) => transform.map(row, transformConfig.options, setOptions));
       }
       if (transform.transform) {
-        data = [...transform.transform(data, transformConfig.options, setOptions, {setAllColumns})];
+        data = [...transform.transform(data, transformConfig.options, setOptions, { allColumns, setAllColumns })];
       }
       return data;
     }, sourceData);
