@@ -60,13 +60,13 @@ function App({ id: urlId }) {
       const setOptions = setTransformOptions(transformConfig.id);
       const transform = transformDefinitions.find(({ id }) => id === transformConfig.type);
       if (transform.map) {
-        sourceData = sourceData.map((row) => transform.map(row, transformConfig.options, setOptions));
+        data = data.map((row) => transform.map(row, transformConfig.options, setOptions));
       }
       if (transform.transform) {
-        sourceData = [...transform.transform(sourceData, transformConfig.options, setOptions)];
+        data = [...transform.transform(data, transformConfig.options, setOptions, {setAllColumns})];
       }
-      return sourceData;
-    }, data);
+      return data;
+    }, sourceData);
 
     setProcessedData(finalData);
     setAvailableColumns(finalData[0] && typeof finalData[0] === "object"

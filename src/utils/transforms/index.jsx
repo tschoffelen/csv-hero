@@ -6,6 +6,7 @@ import { JavascriptTransform } from './javascript';
 import { SortTransform } from './sort';
 import { RenameTransform } from './rename';
 import { AddColumnTransform } from './bulk';
+import { AppendTransform } from "./append";
 
 export const transformDefinitions = [
 	FilterValuesTransform,
@@ -16,6 +17,7 @@ export const transformDefinitions = [
 	SortTransform,
 	MergeTransform,
 	AddColumnTransform,
+	AppendTransform,
 	CoalesceTransform,
 	JavascriptTransform,
 ];
