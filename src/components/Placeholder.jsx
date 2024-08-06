@@ -1,9 +1,9 @@
 import React from 'react';
 import { transformDefinitions } from '../utils/transforms';
 
-const Placeholder = () => {
+const Placeholder = ({...props}) => {
 	return (
-		<div className="bg-gray-100 h-screen flex w-full flex flex-col items-center justify-center">
+		<div className="bg-gray-100 h-screen flex w-full flex flex-col items-center justify-center" {...props}>
 			<div className="bg-white rounded-full h-48 w-48 aspect-square flex mb-10 items-center justify-center">
 				<svg viewBox="0 0 20 20" className="h-24 text-green-600" xmlns="http://www.w3.org/2000/svg">
 					<path

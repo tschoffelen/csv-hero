@@ -10,7 +10,7 @@ import Transformers from "./components/Transformers";
 import Placeholder from "./components/Placeholder";
 
 import { downloadDataAs } from "./utils/download";
-import { processData, readFile } from "./utils/readFile";
+import { processData, readFile, tryParseData } from "./utils/readFile";
 import { transformDefinitions } from "./utils/transforms";
 import { uploadData } from "./utils/cloud";
 
@@ -31,6 +31,23 @@ function App({ id: urlId }) {
         options: { ...transform.options, ...newOptions }
       } : transform));
     };
+  };
+
+  const handleFile = async(file) => {
+    const content = await readFile(file);
+    const rows = processData(content);
+    if (!rows) {
+      return;
+    }
+    setData(rows);
+    setFile(file);
+    setId(uuid());
+    setAllColumns(rows[0] && typeof rows[0] === "object"
+      ? Object
+        .keys(rows[0])
+        .filter((field) => field !== "__internal_id")
+        .map((field) => [field, typeof rows[0][field]])
+      : []);
   };
 
   useEffect(() => {
@@ -88,22 +105,7 @@ function App({ id: urlId }) {
   }
 
   return (
-    <DragAndDrop handleDrop={async(file) => {
-      const content = await readFile(file);
-      const rows = processData(content);
-      if (!rows) {
-        return;
-      }
-      setData(rows);
-      setFile(file);
-      setId(uuid());
-      setAllColumns(rows[0] && typeof rows[0] === "object"
-        ? Object
-          .keys(rows[0])
-          .filter((field) => field !== "__internal_id")
-          .map((field) => [field, typeof rows[0][field]])
-        : []);
-    }}>
+    <DragAndDrop handleDrop={handleFile}>
       {file ? (
         <div className="bg-white h-screen flex w-full">
           <aside className="bg-gray-100 border-r border-gray-200 h-screen w-80 flex-0 flex flex-col">
@@ -155,7 +157,27 @@ function App({ id: urlId }) {
             )}
           </main>
         </div>
-      ) : (<Placeholder />)}
+      ) : (<Placeholder tabIndex={1} autoFocus onPaste={(e) => {
+        if (e.clipboardData.items[0].kind === "file") {
+          return handleFile(e.clipboardData.items[0].getAsFile());
+        }
+        e.clipboardData.items[0].getAsString((content) => {
+          content = tryParseData(content);
+          const rows = content && processData(content);
+          if (!rows) {
+            return;
+          }
+          setData(rows);
+          setFile({ name: "Clipboard" });
+          setId(uuid());
+          setAllColumns(rows[0] && typeof rows[0] === "object"
+            ? Object
+              .keys(rows[0])
+              .filter((field) => field !== "__internal_id")
+              .map((field) => [field, typeof rows[0][field]])
+            : []);
+        });
+      }} />)}
     </DragAndDrop>
   );
 }
