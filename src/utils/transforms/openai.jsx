@@ -107,8 +107,6 @@ export const OpenAITransform = {
       setOptions({ processing: rowCount, tokenUsage });
     }
 
-    console.log({ resultRows, resultsCache, rowCount });
-
     setOptions({ processing: false });
 
     return newRows;
