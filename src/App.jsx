@@ -79,39 +79,45 @@ function App({ id: urlId }) {
 
     // TODO: should we add a debounce here?
 
-    let sourceData = [...data.map((row) => ({ ...row }))];
-    const finalData = transforms.reduce((data, transformConfig) => {
-      // TODO: this lookup is not ideal
-      const setOptions = setTransformOptions(transformConfig.id);
-      const transform = transformDefinitions.find(
-        ({ id }) => id === transformConfig.type
-      );
-      if (transform.map) {
-        data = data.map((row) =>
-          transform.map(row, transformConfig.options, setOptions)
+    (async () => {
+      let newData = [...data.map((row) => ({ ...row }))];
+      for (const transformConfig of transforms) {
+        // TODO: this lookup is not ideal
+        const setOptions = setTransformOptions(transformConfig.id);
+        const transform = transformDefinitions.find(
+          ({ id }) => id === transformConfig.type
         );
+        if (transform.map) {
+          newData = newData.map((row) =>
+            transform.map(row, transformConfig.options, setOptions)
+          );
+        }
+        if (transform.transform) {
+          newData = [
+            ...(await transform.transform(
+              newData,
+              transformConfig.options,
+              setOptions,
+              {
+                allColumns,
+                setAllColumns,
+              }
+            )),
+          ];
+        }
       }
-      if (transform.transform) {
-        data = [
-          ...transform.transform(data, transformConfig.options, setOptions, {
-            allColumns,
-            setAllColumns,
-          }),
-        ];
-      }
-      return data;
-    }, sourceData);
 
-    setProcessedData(finalData);
-    setAvailableColumns(
-      finalData[0] && typeof finalData[0] === "object"
-        ? Object.keys(finalData[0])
-            .filter((field) => field !== "__internal_id")
-            .map((field) => field)
-        : []
-    );
+      setProcessedData(newData);
+      setAvailableColumns(
+        newData[0] && typeof newData[0] === "object"
+          ? Object.keys(newData[0])
+              .filter((field) => field !== "__internal_id")
+              .map((field) => field)
+          : []
+      );
 
-    setId(uuid());
+      setId(uuid());
+    })();
   }, [data, transforms]);
 
   if (loading) {
