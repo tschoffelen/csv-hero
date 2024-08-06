@@ -7,6 +7,7 @@ import { SortTransform } from './sort';
 import { RenameTransform } from './rename';
 import { AddColumnTransform } from './bulk';
 import { AppendTransform } from "./append";
+import { OpenAITransform } from './openai';
 
 export const transformDefinitions = [
 	FilterValuesTransform,
@@ -20,4 +21,5 @@ export const transformDefinitions = [
 	AppendTransform,
 	CoalesceTransform,
 	JavascriptTransform,
+	OpenAITransform
 ];
