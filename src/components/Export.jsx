@@ -13,7 +13,7 @@ const Export = ({ rowsCount, onExport, onUpload, onCopy }) => {
         <span>Export</span>
         {rowsCount && (
           <span className="text-gray-500 lowercase font-normal">
-            {rowsCount} rows
+            {rowsCount.toLocaleString()} rows
           </span>
         )}
       </h3>
