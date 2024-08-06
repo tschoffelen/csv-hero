@@ -1,11 +1,17 @@
 import React from "react";
 import OpenAI from "openai";
 import { Zap } from "react-feather";
+import Select from "../../components/form/Select";
 
-const resultsCache = {};
 const resultRows = {};
 let tokenUsage = 0;
 let cancelled = false;
+
+const models = {
+  "gpt-4o-mini": "GPT-4o mini",
+  "gpt-4o": "GPT-4o",
+  "gpt-3.5-turbo": "GPT-3.5 Turbo",
+};
 
 export const OpenAITransform = {
   id: "openai",
@@ -14,17 +20,20 @@ export const OpenAITransform = {
   defaultOptions: {
     openAiApiKey: localStorage["openAiApiKey"],
     prompt: "",
+    model: "gpt-4o-mini",
     processing: false,
     promptConfirmed: false,
   },
   transform: async (rows, options, setOptions) => {
+    const cacheKey = `${options.prompt}-${options.model}`;
+
     if (!options.promptConfirmed) {
       console.log("Prompt not confirmed");
 
       return rows.map((row) => {
-        if (resultRows[options.prompt]) {
-          if (resultRows[options.prompt][row.__internal_id]) {
-            return resultRows[options.prompt][row.__internal_id];
+        if (resultRows[cacheKey]) {
+          if (resultRows[cacheKey][row.__internal_id]) {
+            return resultRows[cacheKey][row.__internal_id];
           }
         }
         return row;
@@ -32,9 +41,6 @@ export const OpenAITransform = {
     }
 
     setOptions({ promptConfirmed: false, processing: 0 });
-    if (!resultRows[options.prompt]) {
-      resultRows[options.prompt] = {};
-    }
 
     const client = new OpenAI({
       apiKey: options.openAiApiKey,
@@ -43,38 +49,50 @@ export const OpenAITransform = {
 
     const newRows = [];
     let rowCount = 0;
+    if (!resultRows[cacheKey]) {
+      resultRows[cacheKey] = {};
+    }
+
     for (const row of rows) {
-      const actualPrompt = `
+      const systemPrompt = `
         You are given a single row of a CSV file. 
         
         Execute the following transform, and return only the resulting row as a JSON object, without any additional characters or text.
         Leave all other data the exact same, unless otherwise specified.
 
-        Transform to execute: ${options.prompt}
-
         Original data: ${JSON.stringify(row)}
       `;
 
-      if (resultsCache[actualPrompt]) {
-        newRows.push(resultsCache[actualPrompt]);
+      if (resultRows[cacheKey][row.__internal_id]) {
+        console.log(`Using cache`);
+
+        newRows.push(resultRows[cacheKey][row.__internal_id]);
       } else {
         if (cancelled) {
+          console.log("Cancelled");
+
           cancelled = false;
           setOptions({ processing: false });
           break;
         }
         try {
-          const params = {
-            messages: [{ role: "user", content: actualPrompt }],
-            model: "gpt-3.5-turbo",
-          };
-          const chatCompletion = await client.chat.completions.create(params);
+          const chatCompletion = await client.chat.completions.create({
+            messages: [
+              { role: "system", content: systemPrompt },
+              { role: "user", content: options.prompt },
+            ],
+            model: options.model,
+          });
           const responseText = chatCompletion.choices[0].message.content;
-          const response = JSON.parse(responseText);
-          console.log(chatCompletion);
-          console.log(response);
-          resultRows[options.prompt][row.__internal_id] = response;
-          resultsCache[actualPrompt] = response;
+          const response = JSON.parse(
+            responseText
+              ?.replace(/```json/g, "")
+              ?.replace(/```/g, "")
+              .trim()
+          );
+
+          resultRows[cacheKey][row.__internal_id] = response;
+
           newRows.push({ ...response, __internal_id: row.__internal_id });
           tokenUsage += chatCompletion.usage?.total_tokens || 0;
         } catch (e) {
@@ -89,12 +107,26 @@ export const OpenAITransform = {
       setOptions({ processing: rowCount, tokenUsage });
     }
 
+    console.log({ resultRows, resultsCache, rowCount });
+
     setOptions({ processing: false });
 
     return newRows;
   },
-  controls: ({ options, setOptions, availableColumns }) => (
+  controls: ({ options, setOptions }) => (
     <>
+      <Select
+        value={options.model}
+        onChange={(e) => setOptions({ model: e.target.value })}
+        className="mb-2"
+      >
+        <option disabled>Select a model</option>
+        {Object.entries(models).map((option) => (
+          <option key={option[0]} value={option[0]}>
+            {option[1]}
+          </option>
+        ))}
+      </Select>
       <input
         type="text"
         value={options.openAiApiKey}
@@ -135,7 +167,7 @@ export const OpenAITransform = {
           ? "Process data"
           : `Processing (${options.processing} rows completed)...`}
       </button>
-      {!cancelled && options.processing && (
+      {!cancelled && options.processing ? (
         <button
           onClick={() => {
             cancelled = true;
@@ -144,7 +176,7 @@ export const OpenAITransform = {
         >
           Cancel
         </button>
-      )}
+      ) : null}
       {!!options.tokenUsage && (
         <p className="text-xs text-gray-500 mt-2">
           Tokes used: {options.tokenUsage}
