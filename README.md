@@ -19,4 +19,4 @@ yarn start
 
 ## Deployment
 
-This project is automatically deployed when new code is pushed to the `master` branch using [Netlify](https://www.netlify.com).
+This project is automatically deployed when new code is pushed to the `master` branch using Vercel.
