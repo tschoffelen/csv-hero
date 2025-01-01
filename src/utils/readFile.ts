@@ -1,6 +1,8 @@
 import Papa from "papaparse";
 import { v4 as uuid } from "uuid";
 
+import { INTERNAL_ID_FIELD } from "@/lib/constants";
+
 const supportedExtensions = ["csv", "tsv", "json"];
 
 const tryParseJSON = (data) => {
@@ -19,50 +21,58 @@ const tryParseCSV = (data) => {
     header: true,
     dynamicTyping: true,
     skipEmptyLines: true,
-    encoding: "UTF-8"
+    encoding: "UTF-8",
   });
   return csvData.data || null;
 };
 
-export const tryParseData = (data, ext = '') => {
+export const tryParseData = (data, ext = "") => {
   switch (ext) {
-  case "csv":
-  case "tsv":
-    return tryParseCSV(data);
-  case "json":
-    return tryParseJSON(data);
-  default:
-    if (data.startsWith("[") || data.startsWith("{")) {
+    case "csv":
+    case "tsv":
+      return tryParseCSV(data);
+    case "json":
       return tryParseJSON(data);
-    }
-    return tryParseCSV(data);
+    default:
+      if (data.startsWith("[") || data.startsWith("{")) {
+        return tryParseJSON(data);
+      }
+      return tryParseCSV(data);
   }
 };
 
-export const readFile = (file) => new Promise((resolve) => {
-  const extParts = file.name.split(".");
-  const ext = extParts[extParts.length - 1].toLowerCase().trim();
-  if (!supportedExtensions.includes(ext)) {
-    alert(`Sorry, we don't support the file type "${ext}" currently.`);
-    return;
-  }
-
-  let reader = new FileReader();
-  reader.onload = () => {
-    const result = reader.result.toString();
-    const data = tryParseData(result, ext);
-    if (data) {
-      resolve(data);
+export const readFile = (file) =>
+  new Promise((resolve) => {
+    const extParts = file.name.split(".");
+    const ext = extParts[extParts.length - 1].toLowerCase().trim();
+    if (!supportedExtensions.includes(ext)) {
+      alert(`Sorry, we don't support the file type "${ext}" currently.`);
+      return;
     }
-  };
 
-  reader.readAsText(file, "UTF-8");
-});
+    let reader = new FileReader();
+    reader.onload = () => {
+      const result = reader.result.toString();
+      const data = tryParseData(result, ext);
+      if (data) {
+        resolve(data);
+      }
+    };
+
+    reader.readAsText(file, "UTF-8");
+  });
 
 export const processData = (data) => {
   // Check if array of objects, otherwise throw error
-  if (!data || !Array.isArray(data) || !data[0] || typeof data[0] !== "object") {
-    alert("Invalid file: needs to evaluate to an array of objects in order to transform.");
+  if (
+    !data ||
+    !Array.isArray(data) ||
+    !data[0] ||
+    typeof data[0] !== "object"
+  ) {
+    alert(
+      "Invalid file: needs to evaluate to an array of objects in order to transform."
+    );
     return;
   }
 
@@ -72,14 +82,14 @@ export const processData = (data) => {
     Object.keys(row)
       .map((key) => `${key}`.trim())
       .filter(Boolean)
-      .forEach((key) => defaultFields[key] = "");
+      .forEach((key) => (defaultFields[key] = ""));
   });
 
   // Add IDs and normalize column headings
   data = data.map((row) => {
     const newRow = {
       ...defaultFields,
-      __internal_id: uuid()
+      [INTERNAL_ID_FIELD]: uuid(),
     };
     Object.entries(row).forEach(([key, value]) => {
       if (key in defaultFields) {

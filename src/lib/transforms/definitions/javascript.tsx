@@ -1,7 +1,7 @@
 import CodeMirror from '@uiw/react-codemirror';
 import 'codemirror/keymap/sublime';
 import 'codemirror/mode/javascript/javascript';
-import 'codemirror/theme/neo.css';
+import 'codemirror/theme/night.css';
 import { AlertTriangle, Tool } from 'react-feather';
 
 const debounce = function(func, timeout = 300) {
@@ -16,11 +16,12 @@ export const JavascriptTransform = {
 	id: 'eval',
 	title: 'Javascript',
 	icon: Tool,
+	group: "Advanced",
 	defaultOptions: {
 		script: 'rows.map((row) => {\n   row.random = Math.random();\n   return row;\n});',
 		error: null
 	},
-	transform: (rows, options, setOptions) => {
+	transform: (rows, options, setAttributes) => {
 		try {
 			// eslint-disable-next-line no-eval
 			const value = eval(options.script);
@@ -29,12 +30,12 @@ export const JavascriptTransform = {
 				throw new Error('Return value must be an array');
 			}
 			if (options.error) {
-				setOptions({ error: null });
+				setAttributes({ error: null });
 			}
 			return value;
 		} catch (e) {
 			if (options.error !== e.message) {
-				setOptions({ error: e.message });
+				setAttributes({ error: e.message });
 			}
 			console.log(`Failed executing script: `, e);
 		}
@@ -46,7 +47,7 @@ export const JavascriptTransform = {
 				value={options.script}
 				lazyLoadMode={false}
 				options={{
-					theme: 'neo',
+					theme: 'night',
 					keyMap: 'sublime',
 					mode: 'js',
 					lineNumbers: false,

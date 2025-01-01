@@ -1,17 +1,19 @@
 import { GitMerge } from "react-feather";
 
-import Select from "../../components/form/Select";
+import Select from "@/components/form/Select";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export const MergeTransform = {
   id: "merge",
-  title: "Merge",
+  title: "Merge and group",
   icon: GitMerge,
+  group: "Combine",
   defaultOptions: {
     column: "",
     choose: "first",
-    addTotalsRow: false
+    addTotalsRow: false,
   },
-  transform: (rows, options, setOptions, { setAllColumns, allColumns }) => {
+  transform: (rows, options) => {
     if (!options.column) {
       return rows;
     }
@@ -20,25 +22,26 @@ export const MergeTransform = {
     rows.forEach((row) => {
       if (options.choose === "first") {
         newRows[row[options.column]] = {
-          ...row, ...(newRows[row[options.column]] || {}),
-          ...(options.addTotalsRow ? { total: (newRows[row[options.column]]?.total || 0) + 1 } : {})
+          ...row,
+          ...(newRows[row[options.column]] || {}),
+          ...(options.addTotalsRow
+            ? { total: (newRows[row[options.column]]?.total || 0) + 1 }
+            : {}),
         };
       } else {
         newRows[row[options.column]] = {
-          ...(newRows[row[options.column]] || {}), ...row,
-          ...(options.addTotalsRow ? { total: (newRows[row[options.column]]?.total || 0) + 1 } : {})
+          ...(newRows[row[options.column]] || {}),
+          ...row,
+          ...(options.addTotalsRow
+            ? { total: (newRows[row[options.column]]?.total || 0) + 1 }
+            : {}),
         };
       }
     });
 
-    if (options.addTotalsRow && !allColumns.some((f) => f[0] === "total")) {
-      console.log("Adding totals ");
-      setAllColumns([...allColumns, ["total", "number"]]);
-    }
-
     return Object.values(newRows);
   },
-  controls: ({ options, setOptions, availableColumns }) => (
+  controls: ({ options, setOptions, columns }) => (
     <>
       <Select
         value={options.column}
@@ -46,7 +49,7 @@ export const MergeTransform = {
         className="mb-2"
       >
         <option value="">Select a column</option>
-        {availableColumns.map((option) => (
+        {Array.from(columns.keys()).map((option) => (
           <option key={option}>{option}</option>
         ))}
       </Select>
@@ -57,14 +60,13 @@ export const MergeTransform = {
         <option value="first">First match</option>
         <option value="last">Last match</option>
       </Select>
-      <label className="flex mt-3 gap-0.5 font-medium text-gray-700 items-center">
-        <input
-          type="checkbox"
+      <label className="flex mt-3 gap-1.5 font-medium text-gray-300 items-center">
+        <Checkbox
           checked={options.addTotalsRow}
-          onChange={(e) => setOptions({ addTotalsRow: e.target.checked })}
-          className="w-6 h-6" />
+          onCheckedChange={(checked) => setOptions({ addTotalsRow: checked })}
+        />
         Add total row
       </label>
     </>
-  )
+  ),
 };

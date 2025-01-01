@@ -17,7 +17,7 @@ const UploadButton = ({ onUpload }) => {
     <>
       <ShareModal open={open} setOpen={setOpen} />
       <button
-        className="px-3 py-2 text-sm font-medium text-indigo-600 hover:bg-indigo-100 active:bg-indigo-600 active:text-white border border-indigo-600 rounded-r-md"
+        className="px-3 py-2 text-sm font-medium text-white bg-indigo-700 hover:bg-indigo-800 transition rounded-md"
         onClick={upload}>
         {loading ? (
           <Loader className="w-4 h-4 animate-spin" />

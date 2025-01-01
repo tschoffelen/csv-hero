@@ -1,8 +1,10 @@
+import Input from '@/components/form/Input';
 import { Type } from 'react-feather';
 
 export const RenameTransform = {
 	id: 'rename',
 	title: 'Rename column',
+	group: 'Columns',
 	icon: Type,
 	defaultOptions: {
 		column: '',
@@ -21,19 +23,19 @@ export const RenameTransform = {
 	},
 	controls: ({ options, setOptions }) => (
 		<>
-			<input
+			<Input
 				type="text"
 				value={options.column}
 				autoFocus
 				onChange={(e) => setOptions({ column: e.target.value })}
-				className="rounded-md w-full text-sm bg-white outline-none h-9 px-2 border border-gray-200 mb-2"
+				className="w-full mb-2"
 				placeholder="old name"/>
-			<input
+			<Input
 				type="text"
 				value={options.newName}
 				autoFocus
 				onChange={(e) => setOptions({ newName: e.target.value })}
-				className="rounded-md w-full text-sm bg-white outline-none h-9 px-2 border border-gray-200"
+				className="w-full"
 				placeholder="new name"/>
 		</>
 	)

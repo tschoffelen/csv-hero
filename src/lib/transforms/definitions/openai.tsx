@@ -1,11 +1,12 @@
-import React from "react";
 import OpenAI from "openai";
 import { Zap } from "react-feather";
-import Select from "../../components/form/Select";
+import Select from "@/components/form/Select";
+import Input from "@/components/form/Input";
 
 const resultRows = {};
 let tokenUsage = 0;
 let cancelled = false;
+let lastInvocation = 0;
 
 const models = {
   "gpt-4o-mini": "GPT-4o mini",
@@ -16,6 +17,7 @@ const models = {
 export const OpenAITransform = {
   id: "openai",
   title: "AI transform",
+  group: "Advanced",
   icon: Zap,
   defaultOptions: {
     openAiApiKey: localStorage["openAiApiKey"],
@@ -24,10 +26,10 @@ export const OpenAITransform = {
     processing: false,
     promptConfirmed: false,
   },
-  transform: async (rows, options, setOptions) => {
+  transform: async (rows, options, setAttributes) => {
     const cacheKey = `${options.prompt}-${options.model}`;
 
-    if (!options.promptConfirmed) {
+    if (options.lastInvocation > lastInvocation) {
       console.log("Prompt not confirmed");
 
       return rows.map((row) => {
@@ -40,7 +42,9 @@ export const OpenAITransform = {
       });
     }
 
-    setOptions({ promptConfirmed: false, processing: 0 });
+    lastInvocation++;
+
+    setAttributes({ processing: 0 });
 
     const client = new OpenAI({
       apiKey: options.openAiApiKey,
@@ -72,7 +76,7 @@ export const OpenAITransform = {
           console.log("Cancelled");
 
           cancelled = false;
-          setOptions({ processing: false });
+          setAttributes({ processing: false });
           break;
         }
         try {
@@ -98,16 +102,16 @@ export const OpenAITransform = {
         } catch (e) {
           console.log(e);
 
-          setOptions({ error: e.message });
+          setAttributes({ error: e.message });
           newRows.push(row);
         }
       }
 
       rowCount++;
-      setOptions({ processing: rowCount, tokenUsage });
+      setAttributes({ processing: rowCount, tokenUsage });
     }
 
-    setOptions({ processing: false });
+    setAttributes({ processing: false });
 
     return newRows;
   },
@@ -125,7 +129,7 @@ export const OpenAITransform = {
           </option>
         ))}
       </Select>
-      <input
+      <Input
         type="text"
         value={options.openAiApiKey}
         autoFocus
@@ -136,29 +140,28 @@ export const OpenAITransform = {
           });
           localStorage["openAiApiKey"] = e.target.value;
         }}
-        className="rounded-md w-full text-sm bg-white outline-none h-9 px-2 border border-gray-200"
+        className="w-full"
         placeholder="OpenAI API key"
       />
       {!options.openAiApiKey && (
         <a
           href="https://platform.openai.com/api-keys"
-          className="text-xs text-indigo-800 mt-0.5 block"
+          className="text-xs text-indigo-500 mt-1 mb-1 block"
         >
           Get an API key &rarr;
         </a>
       )}
       <textarea
-        type="text"
         value={options.prompt}
         autoFocus
         onChange={(e) =>
-          setOptions({ prompt: e.target.value, promptConfirmed: false })
+          setOptions({ prompt: e.target.value, lastInvocation: 0 })
         }
-        className="rounded-md w-full text-sm bg-white outline-none p-3 h-32 border border-gray-200 mb-2 resize-none mt-2 "
+        className="rounded-md flex-1 text-xs bg-transparent border-gray-700 max-w-full focus:ring-0 focus:outline-0 focus:shadow-0 appearance-none p-2.5 border resize-x w-full mt-2 min-h-32"
         placeholder="Write a prompt..."
       />
       <button
-        onClick={() => setOptions({ promptConfirmed: true })}
+        onClick={() => setOptions({ lastInvocation: lastInvocation + 1 })}
         className="w-full bg-indigo-600 text-white text-sm font-medium rounded-md h-9 mt-2"
       >
         {options.processing === false

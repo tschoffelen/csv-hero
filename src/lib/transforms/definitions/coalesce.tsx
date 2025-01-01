@@ -1,10 +1,11 @@
 import { Copy } from 'react-feather';
 
-import Select from '../../components/form/Select';
+import Select from '@/components/form/Select';
 
 export const CoalesceTransform = {
 	id: 'coalesce',
-	title: 'Coalesce',
+	title: 'Change column type',
+	group: 'Columns',
 	icon: Copy,
 	defaultOptions: {
 		column: '',
@@ -36,7 +37,7 @@ export const CoalesceTransform = {
 			[options.column]: val
 		};
 	},
-	controls: ({ options, setOptions, availableColumns }) => (
+	controls: ({ options, setOptions, columns }) => (
 		<>
 			<Select
 				value={options.column}
@@ -44,7 +45,7 @@ export const CoalesceTransform = {
 				className="mb-2"
 			>
 				<option value="">Select a column</option>
-				{availableColumns.map((option) => (
+				{Array.from(columns.keys()).map((option) => (
 					<option key={option}>{option}</option>
 				))}
 			</Select>
