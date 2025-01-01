@@ -6,11 +6,23 @@ import { DragDropContext, Droppable, Draggable } from "react-beautiful-dnd";
 import AddTransformButton from "./AddTransformButton";
 import { Panel, PanelHeader } from "@/components/panel/PanelItem";
 import { getTransformById } from "@/lib/transforms/definitions";
+import { TransformConfig } from "@/lib/transforms/Transform";
+import { Layer } from "@/lib/layers/Layer";
 
-const Transformers = ({ transforms, setTransforms, layers }) => {
-  const [openPanel, setOpenPanel] = useState(null);
+type TransformersProps = {
+  transforms: TransformConfig[];
+  setTransforms: any;
+  layers: Layer[];
+};
 
-  const addTransform = (transform) => {
+const Transformers = ({
+  transforms,
+  setTransforms,
+  layers,
+}: TransformersProps) => {
+  const [openPanel, setOpenPanel] = useState<string | null>(null);
+
+  const addTransform = (transform: any) => {
     const id = uuid();
     setTransforms((transforms) => [
       ...transforms,
@@ -23,9 +35,9 @@ const Transformers = ({ transforms, setTransforms, layers }) => {
     setOpenPanel(id);
   };
 
-  const setTransformOptions = (transformId) => {
-    return (newOptions) => {
-      setTransforms((transforms) =>
+  const setTransformOptions = (transformId: string) => {
+    return (newOptions: Record<string, any>) => {
+      setTransforms((transforms: TransformConfig[]) =>
         transforms.map((transform) =>
           transform.id === transformId
             ? {
@@ -38,13 +50,13 @@ const Transformers = ({ transforms, setTransforms, layers }) => {
     };
   };
 
-  const removeTransform = (transformId) => {
-    setTransforms((transforms) =>
+  const removeTransform = (transformId: string) => {
+    setTransforms((transforms: TransformConfig[]) =>
       transforms.filter((transform) => transform.id !== transformId)
     );
   };
 
-  const onDragEnd = (result) => {
+  const onDragEnd = (result: any) => {
     if (!result.destination) {
       return; // dropped outside the list
     }
@@ -60,7 +72,7 @@ const Transformers = ({ transforms, setTransforms, layers }) => {
     <section>
       <DragDropContext onDragEnd={onDragEnd}>
         <Droppable droppableId="droppable">
-          {(provided) => (
+          {(provided: any) => (
             <div {...provided.droppableProps} ref={provided.innerRef}>
               {transforms.map((transformConfig, index) => {
                 const transform = getTransformById(transformConfig.type);
@@ -73,7 +85,7 @@ const Transformers = ({ transforms, setTransforms, layers }) => {
                     draggableId={transformConfig.id}
                     index={index}
                   >
-                    {(provided) => (
+                    {(provided: any) => (
                       <div
                         ref={provided.innerRef}
                         {...provided.draggableProps}
@@ -93,7 +105,7 @@ const Transformers = ({ transforms, setTransforms, layers }) => {
                                     <button
                                       className="-m-2 p-2"
                                       onClick={() =>
-                                        setOpenPanel((panel) =>
+                                        setOpenPanel((panel: string) =>
                                           panel === transformConfig.id
                                             ? null
                                             : transformConfig.id
