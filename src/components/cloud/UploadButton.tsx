@@ -10,7 +10,7 @@ const UploadButton = ({ onUpload }) => {
     setLoading(true);
     const value = await onUpload();
     setLoading(false);
-    setOpen(`https://csvhero.includable.com/${value}`);
+    setOpen(`https://csvhero.app/${value}`);
   };
 
   return (

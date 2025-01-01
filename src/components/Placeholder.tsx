@@ -31,7 +31,7 @@ const Placeholder = ({ ...props }) => {
       </div>
       <a
         className="fixed bottom-2 right-2 opacity-20 hover:opacity-100 transition-opacity"
-        href="https://includable.com/?utm_source=csvhero.schof.co"
+        href="https://includable.com/?utm_source=csvhero.app"
         title="Powered by Includable"
         target="_blank"
         rel="noopener noreferrer"

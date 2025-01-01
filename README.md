@@ -4,7 +4,7 @@
 
 CSV Hero helps you to format, filter and convert CSV and JSON files. Need to generate a CSV from a JSON file, but only want to include rows that contain the word 'cow'? CSV Hero can help with that.
 
-**[csvhero.schof.co](https://csvhero.schof.co)**
+**[csvhero.app](https://csvhero.app)**
 
 ---
 
