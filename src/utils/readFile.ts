@@ -63,6 +63,17 @@ export const readFile = (file) =>
   });
 
 export const processData = (data) => {
+  // Data is in the format of {"data": [ ... ]}
+  if (
+    data &&
+    !Array.isArray(data) &&
+    typeof data === "object" &&
+    Object.keys(data).length === 1 &&
+    Array.isArray(data[Object.keys(data)[0]])
+  ) {
+    data = data[Object.keys(data)[0]];
+  }
+
   // Check if array of objects, otherwise throw error
   if (
     !data ||
