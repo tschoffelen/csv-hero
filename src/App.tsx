@@ -1,28 +1,27 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router";
-import { v4 as uuid } from "uuid";
 import { Loader } from "react-feather";
+import { Toaster } from "react-hot-toast";
+import { FileIcon } from "lucide-react";
 import axios from "axios";
 
 import DragAndDrop from "./components/DragAndDrop";
 import Export from "./components/Export";
 import Transformers from "./components/Transformers";
 import Placeholder from "./components/Placeholder";
-
-import { copyDataAs, downloadDataAs } from "./utils/download";
-import { processData, readFile, tryParseData } from "./utils/readFile";
-import { uploadData } from "./utils/cloud";
-import { Toaster } from "react-hot-toast";
-import useLayers from "./lib/layers/layersReducer";
-import { Layer } from "./lib/layers/Layer";
 import { DataTable } from "@/components/renderer/DataTable";
+import { Panel, PanelHeader } from "@/components/panel/PanelItem";
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
-import { FileIcon } from "lucide-react";
-import { Panel, PanelHeader } from "@/components/panel/PanelItem";
+
+import { copyDataAs, downloadDataAs } from "./utils/download";
+import { processData, readFile, tryParseData } from "./utils/readFile";
+import { uploadData } from "./utils/cloud";
+import { Layer } from "./lib/layers/Layer";
+import useLayers from "./lib/layers/layersReducer";
 
 function App() {
   const { id: urlId } = useParams();
@@ -36,7 +35,7 @@ function App() {
   const lastLayer: Layer | undefined = layers[layers.length - 1];
   const processedData = lastLayer?.data;
 
-  const handleFile = async (file) => {
+  const handleFile = async (file: any) => {
     const content = await readFile(file);
     const rows = processData(content);
     if (!rows) {
@@ -117,10 +116,10 @@ function App() {
                       transforms
                     )
                   }
-                  onCopy={(exportFormat) =>
+                  onCopy={(exportFormat: string) =>
                     copyDataAs(lastLayer?.data, exportFormat)
                   }
-                  onExport={(exportFormat) =>
+                  onExport={(exportFormat: string) =>
                     downloadDataAs(lastLayer?.data, exportFormat)
                   }
                 />
@@ -143,7 +142,7 @@ function App() {
               if (e.clipboardData.items[0].kind === "file") {
                 return handleFile(e.clipboardData.items[0].getAsFile());
               }
-              e.clipboardData.items[0].getAsString((content) => {
+              e.clipboardData.items[0].getAsString((content: string) => {
                 content = tryParseData(content);
                 const rows = content && processData(content);
                 if (!rows) return;

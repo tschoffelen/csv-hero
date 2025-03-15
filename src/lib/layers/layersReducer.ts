@@ -1,8 +1,9 @@
 import { useDeferredValue, useEffect, useState } from "react";
-import {Layer} from "./Layer";
+import { Layer } from "./Layer";
 import { getTransformById } from "@/lib/transforms/definitions";
+import { TransformConfig } from "@/lib/transforms/Transform";
 
-const useLayers = (baseLayer?: Layer, transforms) => {
+const useLayers = (baseLayer: Layer | null, transforms: TransformConfig[]) => {
   const [layers, setLayers] = useState<Layer[]>(baseLayer ? [baseLayer] : []);
 
   useEffect(() => {
@@ -16,6 +17,7 @@ const useLayers = (baseLayer?: Layer, transforms) => {
       const newLayers = [baseLayer];
       for (const transformConfig of transforms) {
         const transform = getTransformById(transformConfig.type);
+        if (!transform) continue;
 
         const lastLayer = newLayers[newLayers.length - 1];
 
@@ -28,6 +30,7 @@ const useLayers = (baseLayer?: Layer, transforms) => {
             transform.map(row, transformConfig.options, newLayer.setAttributes)
           );
         }
+
         if (transform.transform) {
           newLayer.data = [
             ...(await transform.transform(

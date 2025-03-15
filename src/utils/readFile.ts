@@ -5,19 +5,19 @@ import { INTERNAL_ID_FIELD } from "@/lib/constants";
 
 const supportedExtensions = ["csv", "tsv", "json"];
 
-const tryParseJSON = (data) => {
+const tryParseJSON = (data: string) => {
   try {
     return JSON.parse(data);
-  } catch (e) {
+  } catch (e: any) {
     alert(`Error parsing JSON: ${e.toString()}`);
   }
 
   return null;
 };
 
-const tryParseCSV = (data) => {
+const tryParseCSV = (data: string) => {
   const csvData = Papa.parse(data, {
-    error: (e) => alert(`Error parsing CSV: ${e.toString()}`),
+    error: (e: any) => alert(`Error parsing CSV: ${e.toString()}`),
     header: true,
     dynamicTyping: true,
     skipEmptyLines: true,
@@ -26,7 +26,7 @@ const tryParseCSV = (data) => {
   return csvData.data || null;
 };
 
-export const tryParseData = (data, ext = "") => {
+export const tryParseData = (data: string, ext = "") => {
   switch (ext) {
     case "csv":
     case "tsv":
@@ -41,7 +41,7 @@ export const tryParseData = (data, ext = "") => {
   }
 };
 
-export const readFile = (file) =>
+export const readFile = (file: File) =>
   new Promise((resolve) => {
     const extParts = file.name.split(".");
     const ext = extParts[extParts.length - 1].toLowerCase().trim();

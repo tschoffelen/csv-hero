@@ -37,6 +37,8 @@ export class Layer {
 
   public recalculateColumns() {
     this.columns = new Map();
+
+    // infer columns from the first 100 rows
     for (let i = 0; i < Math.min(this._data.length, 100); i++) {
       const row = this._data[i];
       if (row && typeof row === "object") {

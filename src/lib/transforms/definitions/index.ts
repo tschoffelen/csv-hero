@@ -25,5 +25,5 @@ export const transformDefinitions = [
   // OpenAITransform,
 ];
 
-export const getTransformById = (id: string) =>
+export const getTransformById = (id: string): any =>
   transformDefinitions.find((transform) => transform.id === id);
