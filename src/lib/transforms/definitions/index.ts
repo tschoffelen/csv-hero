@@ -8,7 +8,7 @@ import { SortTransform } from "./sort";
 import { RenameTransform } from "./rename";
 import { AddColumnTransform } from "./add-column";
 import { AppendTransform } from "./append";
-// import { OpenAITransform } from "./openai";
+import { OpenAITransform } from "./openai";
 
 export const transformDefinitions = [
   FilterValuesTransform,
@@ -22,7 +22,7 @@ export const transformDefinitions = [
   AppendTransform,
   CoalesceTransform,
   JavascriptTransform,
-  // OpenAITransform,
+  OpenAITransform,
 ];
 
 export const getTransformById = (id: string): any =>

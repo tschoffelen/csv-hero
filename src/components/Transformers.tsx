@@ -141,6 +141,7 @@ const Transformers = ({
                                   transformConfig.id
                                 ),
                                 columns: layer?.columns || layers[0].columns,
+                                exampleRow: layer?.data[0] || layers[0].data[0],
                               })}
                             </div>
                           )}
