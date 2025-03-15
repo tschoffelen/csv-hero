@@ -21,8 +21,8 @@ export const transformDefinitions = [
   AddColumnTransform,
   AppendTransform,
   CoalesceTransform,
-  JavascriptTransform,
   OpenAITransform,
+  JavascriptTransform,
 ];
 
 export const getTransformById = (id: string): any =>
