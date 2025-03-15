@@ -128,7 +128,9 @@ export function DataTable({ layer }: { layer: Layer }) {
               >
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
+                    <div className="line-clamp-6 text-ellipsis overflow-hidden">
                     {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </div>
                   </TableCell>
                 ))}
               </TableRow>
