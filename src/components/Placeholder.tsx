@@ -20,7 +20,7 @@ const Placeholder = ({ ...props }) => {
         </svg>
       </div>
       <p className="text-gray-400">
-        Drop a CSV or JSON file to start formatting data
+        Drop a CSV, Excel or JSON file to start formatting data
       </p>
       <div className="flex gap-4 mt-6">
         {transformDefinitions.map(({ id, icon: Icon }) => (

@@ -1,5 +1,6 @@
 import Papa from "papaparse";
 import toast from "react-hot-toast";
+import * as XLSX from "xlsx";
 
 const getResult = (data, format) => {
   // First trim out internal keys
@@ -9,6 +10,8 @@ const getResult = (data, format) => {
     )
   );
   let content;
+  let isBlob = false;
+  
   switch (format) {
     case "json":
       content = JSON.stringify(data);
@@ -19,18 +22,25 @@ const getResult = (data, format) => {
     case "tsv":
       content = Papa.unparse(data, { delimiter: "\t" });
       break;
+    case "xlsx":
+      const worksheet = XLSX.utils.json_to_sheet(data);
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, worksheet, "Sheet1");
+      content = XLSX.write(workbook, { bookType: "xlsx", type: "array" });
+      isBlob = true;
+      break;
     default:
       throw new Error(`Invalid format: ${format}`);
   }
 
-  return content;
+  return { content, isBlob };
 };
 
 export const downloadDataAs = (data, format) => {
   // TODO: see if we can be smarter with generating filenames
   const baseName = "data";
 
-  let content = getResult(data, format);
+  let { content, isBlob } = getResult(data, format);
   let mimeType, filename;
   switch (format) {
     case "json":
@@ -45,15 +55,25 @@ export const downloadDataAs = (data, format) => {
       mimeType = "text/tsv";
       filename = `${baseName}.tsv`;
       break;
+    case "xlsx":
+      mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      filename = `${baseName}.xlsx`;
+      break;
     default:
       throw new Error(`Invalid format: ${format}`);
   }
 
-  return downloadBlob(content, mimeType, filename);
+  return downloadBlob(content, mimeType, filename, isBlob);
 };
 
 export const copyDataAs = async (data, format) => {
-  let content = getResult(data, format);
+  // Excel data can't be copied to clipboard directly
+  if (format === "xlsx") {
+    toast.error('Cannot copy Excel format to clipboard. Please use Export instead.');
+    return;
+  }
+
+  let { content } = getResult(data, format);
 
   try {
     await navigator.clipboard.writeText(content);
@@ -63,12 +83,17 @@ export const copyDataAs = async (data, format) => {
   }
 };
 
-const downloadBlob = (content, mimeType, filename) => {
-  const blob = new Blob([content], { type: mimeType });
+const downloadBlob = (content, mimeType, filename, isBlob = false) => {
+  const blob = isBlob 
+    ? new Blob([content], { type: mimeType })
+    : new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
 
   const anchorElement = document.createElement("a");
   anchorElement.setAttribute("href", url);
   anchorElement.setAttribute("download", filename);
   anchorElement.click();
+  
+  // Clean up by revoking the Object URL
+  setTimeout(() => URL.revokeObjectURL(url), 100);
 };
