@@ -30,7 +30,7 @@ const Placeholder = ({ handleFile, ...props }) => {
         </svg>
       </div>
       <p className="text-gray-400">
-        Drop a CSV, Excel or JSON file to start formatting data
+        Drop a CSV, Excel, JSON or XML file to start formatting data
       </p>
       <div className="flex gap-4 mt-4 mb-10">
         {transformDefinitions.map(({ id, icon: Icon }) => (
@@ -51,7 +51,7 @@ const Placeholder = ({ handleFile, ...props }) => {
         type="file"
         ref={fileInputRef}
         onChange={onFileSelect}
-        accept=".csv,.tsv,.json,.xlsx,.xls"
+        accept=".csv,.tsv,.json,.xlsx,.xls,.xml"
         className="hidden"
       />
 

@@ -1,10 +1,11 @@
 import Papa from "papaparse";
 import { v4 as uuid } from "uuid";
 import * as XLSX from "xlsx";
+import { XMLParser } from "fast-xml-parser";
 
 import { INTERNAL_ID_FIELD } from "@/lib/constants";
 
-const supportedExtensions = ["csv", "tsv", "json", "xlsx", "xls"];
+const supportedExtensions = ["csv", "tsv", "json", "xlsx", "xls", "xml"];
 
 const tryParseJSON = (data: string) => {
   try {
@@ -39,6 +40,66 @@ const tryParseXLSX = (data: ArrayBuffer) => {
   }
 };
 
+const tryParseXML = (data: string) => {
+  try {
+    // Options for XML parsing
+    const options = {
+      ignoreAttributes: false,
+      attributeNamePrefix: "_",
+      isArray: (name, jpath, isLeafNode, isAttribute) => {
+        // Make items that appear multiple times into arrays
+        // This is common in RSS feeds and other XML formats
+        return jpath.endsWith('.item') || jpath.endsWith('.entry');
+      }
+    };
+    
+    const parser = new XMLParser(options);
+    const result = parser.parse(data);
+    
+    // Handle common XML document types
+    let items = [];
+    
+    // Try to extract items from RSS feed
+    if (result.rss?.channel?.item) {
+      items = result.rss.channel.item;
+    }
+    // Try to extract entries from Atom feed
+    else if (result.feed?.entry) {
+      items = result.feed.entry;
+    }
+    // For other XML types, find the first array in the result
+    else {
+      // Look for any array in the parsed data
+      const findFirstArray = (obj) => {
+        if (!obj || typeof obj !== 'object') return null;
+        
+        for (const key in obj) {
+          const value = obj[key];
+          if (Array.isArray(value) && value.length > 0 && typeof value[0] === 'object') {
+            return value;
+          }
+          const nestedArray = findFirstArray(value);
+          if (nestedArray) return nestedArray;
+        }
+        return null;
+      };
+      
+      items = findFirstArray(result);
+      
+      // If no suitable array found, wrap the whole result in an array
+      if (!items) {
+        // Create an array with one element containing all the data
+        items = [result];
+      }
+    }
+    
+    return items;
+  } catch (e: any) {
+    alert(`Error parsing XML: ${e.toString()}`);
+    return null;
+  }
+};
+
 export const tryParseData = (data: string | ArrayBuffer, ext = "") => {
   switch (ext) {
     case "csv":
@@ -49,11 +110,19 @@ export const tryParseData = (data: string | ArrayBuffer, ext = "") => {
     case "xlsx":
     case "xls":
       return tryParseXLSX(data as ArrayBuffer);
+    case "xml":
+      return tryParseXML(data as string);
     default:
       if (typeof data === "string") {
-        if (data.startsWith("[") || data.startsWith("{")) {
+        // Try to detect XML by its typical starting pattern
+        if (data.trim().startsWith("<?xml") || data.trim().startsWith("<")) {
+          return tryParseXML(data as string);
+        }
+        // JSON detection
+        else if (data.startsWith("[") || data.startsWith("{")) {
           return tryParseJSON(data);
         }
+        // Fall back to CSV parsing
         return tryParseCSV(data);
       }
       return null;

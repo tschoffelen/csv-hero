@@ -20,6 +20,7 @@ const Export = ({ rowsCount, onExport, onUpload, onCopy }) => {
             <option value="tsv">TSV</option>
             <option value="json">JSON</option>
             <option value="xlsx">Excel</option>
+            <option value="xml">XML</option>
           </select>
         </span>
         {rowsCount && (

@@ -2,7 +2,17 @@ import Papa from "papaparse";
 import toast from "react-hot-toast";
 import * as XLSX from "xlsx";
 
-const getResult = (data, format) => {
+const escapeXML = (str: any) => {
+  if (str === null || str === undefined) return "";
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&apos;");
+};
+
+const getResult = (data: any[], format: string) => {
   // First trim out internal keys
   data = data.map((row) =>
     Object.fromEntries(
@@ -11,7 +21,7 @@ const getResult = (data, format) => {
   );
   let content;
   let isBlob = false;
-  
+
   switch (format) {
     case "json":
       content = JSON.stringify(data);
@@ -21,6 +31,25 @@ const getResult = (data, format) => {
       break;
     case "tsv":
       content = Papa.unparse(data, { delimiter: "\t" });
+      break;
+    case "xml":
+      content =
+        `<?xml version="1.0" encoding="UTF-8"?>\n` +
+        `<root>\n` +
+        `${data
+          .map(
+            (row) =>
+              `  <row>\n` +
+              `${Object.entries(row)
+                .map(([key, value]) => {
+                  key = key.replace(/\s+/g, "_");
+                  return `    <${key}>${escapeXML(value)}</${key}>`;
+                })
+                .join("\n")}` +
+              `  </row>`
+          )
+          .join("\n")}` +
+        `\n</root>`;
       break;
     case "xlsx":
       const worksheet = XLSX.utils.json_to_sheet(data);
@@ -36,7 +65,7 @@ const getResult = (data, format) => {
   return { content, isBlob };
 };
 
-export const downloadDataAs = (data, format) => {
+export const downloadDataAs = (data: any, format: string) => {
   // TODO: see if we can be smarter with generating filenames
   const baseName = "data";
 
@@ -55,8 +84,13 @@ export const downloadDataAs = (data, format) => {
       mimeType = "text/tsv";
       filename = `${baseName}.tsv`;
       break;
+    case "xml":
+      mimeType = "application/xml";
+      filename = `${baseName}.xml`;
+      break;
     case "xlsx":
-      mimeType = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+      mimeType =
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
       filename = `${baseName}.xlsx`;
       break;
     default:
@@ -66,10 +100,12 @@ export const downloadDataAs = (data, format) => {
   return downloadBlob(content, mimeType, filename, isBlob);
 };
 
-export const copyDataAs = async (data, format) => {
+export const copyDataAs = async (data: any, format: string) => {
   // Excel data can't be copied to clipboard directly
   if (format === "xlsx") {
-    toast.error('Cannot copy Excel format to clipboard. Please use Export instead.');
+    toast.error(
+      "Cannot copy Excel format to clipboard. Please use Export instead."
+    );
     return;
   }
 
@@ -77,14 +113,19 @@ export const copyDataAs = async (data, format) => {
 
   try {
     await navigator.clipboard.writeText(content);
-    toast.success('Copied to clipboard');
+    toast.success("Copied to clipboard");
   } catch (err) {
     console.error("Failed to copy: ", err);
   }
 };
 
-const downloadBlob = (content, mimeType, filename, isBlob = false) => {
-  const blob = isBlob 
+const downloadBlob = (
+  content: any,
+  mimeType: string,
+  filename: string,
+  isBlob = false
+) => {
+  const blob = isBlob
     ? new Blob([content], { type: mimeType })
     : new Blob([content], { type: mimeType });
   const url = URL.createObjectURL(blob);
@@ -93,7 +134,7 @@ const downloadBlob = (content, mimeType, filename, isBlob = false) => {
   anchorElement.setAttribute("href", url);
   anchorElement.setAttribute("download", filename);
   anchorElement.click();
-  
+
   // Clean up by revoking the Object URL
   setTimeout(() => URL.revokeObjectURL(url), 100);
 };
