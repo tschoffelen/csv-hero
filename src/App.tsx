@@ -138,6 +138,7 @@ function App() {
           <Placeholder
             tabIndex={1}
             autoFocus
+            handleFile={handleFile}
             onPaste={(e) => {
               if (e.clipboardData.items[0].kind === "file") {
                 return handleFile(e.clipboardData.items[0].getAsFile());
