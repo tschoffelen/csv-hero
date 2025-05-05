@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Copy } from "react-feather";
 
 import UploadButton from "./cloud/UploadButton";
+import { DatasetPublisher } from "@/components/cloud/DatasetPublisher";
 
-const Export = ({ rowsCount, onExport, onUpload, onCopy }) => {
+const Export = ({ rowsCount, onExport, onUpload, onCopy, layers }) => {
   const [exportFormat, setExportFormat] = useState("csv");
 
   return (
@@ -46,6 +47,7 @@ const Export = ({ rowsCount, onExport, onUpload, onCopy }) => {
           <Copy className="w-4 h-4" />
         </button>
         <UploadButton onUpload={onUpload} />
+        <DatasetPublisher layers={layers} />
       </div>
     </section>
   );

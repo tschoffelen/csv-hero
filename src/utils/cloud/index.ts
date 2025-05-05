@@ -1,19 +1,41 @@
-export const uploadData = async(data, name, transforms) => {
-  const payload = {
-    data, name, transforms
-  };
-
-  const res = await fetch(`https://schof.link/api/get-url?filename=csvhero.json&contentType=${encodeURIComponent("application/json")}`);
+export const uploadPart = async (
+  data: string | Blob,
+  filename = "data.json",
+  contentType = "application/json"
+) => {
+  const res = await fetch(
+    `https://mirri.link/api/get-url?filename=${encodeURIComponent(
+      filename
+    )}&contentType=${encodeURIComponent(contentType)}`
+  );
   const { url, key } = await res.json();
 
   await fetch(url, {
     method: "PUT",
-    body: JSON.stringify(payload),
+    body: data,
     headers: {
-      "Content-Type": "application/json",
-      "Content-Disposition": "inline; filename=\"csvhero.json\""
-    }
+      "Content-Type": contentType,
+      "Content-Disposition": `inline; filename="${filename}"`,
+    },
   });
 
   return key;
+};
+
+export const uploadData = async (
+  data: any,
+  name: string,
+  transforms: any[]
+) => {
+  const payload = {
+    data,
+    name,
+    transforms,
+  };
+
+  return uploadPart(
+    JSON.stringify(payload),
+    "csvhero.json",
+    "application/json"
+  );
 };

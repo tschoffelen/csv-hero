@@ -51,7 +51,7 @@ function App() {
     }
     (async () => {
       setLoading(true);
-      const { data } = await axios.get(`https://schof.link/${urlId}`);
+      const { data } = await axios.get(`https://mirri.link/${urlId}`);
       setTransforms(data.transforms);
       setBaseLayer(new Layer(data.data, { name: data.name }));
       setLoading(false);
@@ -122,6 +122,7 @@ function App() {
                   onExport={(exportFormat: string) =>
                     downloadDataAs(lastLayer?.data, exportFormat)
                   }
+                  layers={layers}
                 />
               </ResizablePanel>
               <ResizableHandle />

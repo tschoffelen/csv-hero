@@ -12,7 +12,7 @@ const escapeXML = (str: any) => {
     .replace(/'/g, "&apos;");
 };
 
-const getResult = (data: any[], format: string) => {
+export const getResult = (data: any[], format: string) => {
   // First trim out internal keys
   data = data.map((row) =>
     Object.fromEntries(
