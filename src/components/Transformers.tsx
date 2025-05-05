@@ -77,6 +77,7 @@ const Transformers = ({
               {transforms.map((transformConfig, index) => {
                 const transform = getTransformById(transformConfig.type);
                 const layer = layers[index];
+                const nextLayer = layers[index + 1];
                 const open =
                   transform.controls && openPanel === transformConfig.id;
                 return (
@@ -140,6 +141,7 @@ const Transformers = ({
                                 setOptions: setTransformOptions(
                                   transformConfig.id
                                 ),
+                                attributes: nextLayer?.attributes || {},
                                 columns: layer?.columns || layers[0].columns,
                                 exampleRow: layer?.data[0] || layers[0].data[0],
                               })}

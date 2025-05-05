@@ -9,6 +9,7 @@ import { RenameTransform } from "./rename";
 import { AddColumnTransform } from "./add-column";
 import { AppendTransform } from "./append";
 import { OpenAITransform } from "./openai";
+import { SqlTransform } from "./sql";
 
 export const transformDefinitions = [
   FilterValuesTransform,
@@ -23,6 +24,7 @@ export const transformDefinitions = [
   CoalesceTransform,
   OpenAITransform,
   JavascriptTransform,
+  SqlTransform,
 ];
 
 export const getTransformById = (id: string): any =>

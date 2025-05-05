@@ -25,9 +25,11 @@ const useLayers = (baseLayer: Layer | null, transforms: TransformConfig[]) => {
           transform: transformConfig,
         });
 
+        const setAttributes = newLayer.setAttributes.bind(newLayer);
+
         if (transform.map) {
           newLayer.data = newLayer.data.map((row) =>
-            transform.map(row, transformConfig.options, newLayer.setAttributes)
+            transform.map(row, transformConfig.options, setAttributes)
           );
         }
 
@@ -36,7 +38,7 @@ const useLayers = (baseLayer: Layer | null, transforms: TransformConfig[]) => {
             ...(await transform.transform(
               newLayer.data,
               transformConfig.options,
-              newLayer.setAttributes
+              setAttributes
             )),
           ];
         }

@@ -53,11 +53,11 @@ const getColumnsFromLayer = (layer: Layer): ColumnDef<any>[] => {
       if (value === "") {
         return <div className="text-sm text-gray-400">empty</div>;
       }
-      if (type === "number") {
+      if (type === "number" && value?.toLocaleString) {
         return <div>{value.toLocaleString()}</div>;
       }
       if (type === "string") {
-        return <div>{value}</div>;
+        return <div>{value?.toString()}</div>;
       }
       return <pre className="font-mono">{JSON.stringify(value)}</pre>;
     },
@@ -129,7 +129,10 @@ export function DataTable({ layer }: { layer: Layer }) {
                 {row.getVisibleCells().map((cell) => (
                   <TableCell key={cell.id}>
                     <div className="line-clamp-6 text-ellipsis overflow-hidden">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext()
+                      )}
                     </div>
                   </TableCell>
                 ))}
