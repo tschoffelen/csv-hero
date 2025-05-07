@@ -8,11 +8,6 @@
   }
 }
 
-html,
-body {
-  overflow: hidden;
-}
-
 .CodeMirror {
   font-size: 12px;
   border-radius: 0.375rem;

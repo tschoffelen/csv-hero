@@ -68,6 +68,7 @@ function App() {
 
   return (
     <>
+    <style>{"html, body { overflow: hidden;}"}</style>
       <Toaster
         position="top-right"
         reverseOrder={false}

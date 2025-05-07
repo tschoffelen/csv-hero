@@ -44,7 +44,7 @@ export const Dataset = () => {
           <h1 className="font-bold text-2xl md:text-4xl text-zinc-900 flex-1">
             {metadata.title}
           </h1>
-        <div className="flex flex-wrap gap-6 md:gap-8 my-6 bg-neutral-100 p-5 rounded-lg">
+        <div className="flex flex-wrap gap-6 md:gap-9 mt-6 mb-10 bg-neutral-100 p-5 rounded-lg">
           <div>
             <h3 className="text-xs font-medium text-zinc-500">Rows</h3>
             <p className="text-lg font-medium text-zinc-900">
@@ -65,13 +65,13 @@ export const Dataset = () => {
           </div>
           <DownloadDropdown links={metadata.links} />
         </div>
-        <div className="prose mb-10">
+        <div className="prose mb-12">
           <Markdown>{metadata.description}</Markdown>
         </div>
         <Tabs defaultValue="preview">
           <TabsList className="mb-5">
             <TabsTrigger value="preview">Preview</TabsTrigger>
-            <TabsTrigger value="structure">Structure</TabsTrigger>
+            <TabsTrigger value="structure">Data structure</TabsTrigger>
           </TabsList>
           <TabsContent value="preview">
             <div className="border border-zinc-200 overflow-hidden rounded-md bg-white h-[640px] text-sm">
@@ -91,7 +91,22 @@ export const Dataset = () => {
             </div>
           </TabsContent>
           <TabsContent value="structure">
-            Change your password here.
+          <table className="w-full border-t border-gray-100 text-sm">
+            {metadata.schema
+              .map(({name, type, description}) => (
+                <tr key={name} className="border-b border-gray-100">
+                  <td className="text-left align-top pr-3 py-3">
+                    <div className="font-mono">{name}</div>
+                    <div className="text-gray-500 text-xs mt-0.5">
+                      {type}
+                    </div>
+                  </td>
+                  <td className="w-full p-3 pr-0 prose prose-sm">
+                  <Markdown>{description}</Markdown>
+                  </td>
+                </tr>
+              ))}
+          </table>
           </TabsContent>
         </Tabs>
       </div>
