@@ -45,17 +45,17 @@ export const Dataset = () => {
         <h1 className="font-bold text-2xl md:text-4xl text-zinc-900 flex-1">
           {metadata.title}
         </h1>
-        <div className="flex flex-wrap items-center gap-6 md:gap-9 mt-6 mb-10 bg-neutral-100 p-5 rounded-lg">
+        <div className="flex flex-wrap items-center gap-6 md:gap-9 mt-6 mb-10 bg-neutral-100 p-5 px-5.5 rounded-lg">
           <div>
             <h3 className="text-xs font-medium text-zinc-500">Rows</h3>
             <p className="text-lg font-medium text-zinc-900">
-              {metadata.statistics.rows}
+              {metadata.statistics.rows?.toLocaleString()}
             </p>
           </div>
           <div>
             <h3 className="text-xs font-medium text-zinc-500">Columns</h3>
             <p className="text-lg font-medium text-zinc-900">
-              {metadata.statistics.columns}
+              {metadata.statistics.columns?.toLocaleString()}
             </p>
           </div>
           <div>
