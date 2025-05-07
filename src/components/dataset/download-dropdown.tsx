@@ -27,18 +27,8 @@ export const DownloadDropdown = ({ links }) => {
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>
-          <a href={`${links.baseUrl}${links.xlsx}`} download target="_blank">
-            Excel
-          </a>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
           <a href={`${links.baseUrl}${links.csv}`} download target="_blank">
             CSV
-          </a>
-        </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <a href={`${links.baseUrl}${links.tsv}`} download target="_blank">
-            TSV
           </a>
         </DropdownMenuItem>
         <DropdownMenuItem asChild>

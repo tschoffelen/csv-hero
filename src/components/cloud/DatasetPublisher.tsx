@@ -68,20 +68,10 @@ export const DatasetPublisher = ({ layers }: { layers: Layer[] }) => {
           "data.csv",
           "text/csv"
         ),
-        xlsx: await uploadPart(
-          getResult(data, "xlsx").content,
-          "data.xlsx",
-          "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-        ),
         xml: await uploadPart(
           getResult(data, "xml").content,
           "data.xml",
           "application/xml"
-        ),
-        tsv: await uploadPart(
-          getResult(data, "tsv").content,
-          "data.tsv",
-          "text/tsv"
         ),
         preview: await uploadPart(
           getResult(data.slice(0, 20), "json").content,
