@@ -64,7 +64,13 @@ const getColumnsFromLayer = (layer: Layer): ColumnDef<any>[] => {
   }));
 };
 
-export function DataTable({ layer }: { layer: Layer }) {
+export function DataTable({
+  layer,
+  attributionTitle = undefined,
+}: {
+  layer: Layer;
+  attributionTitle: string | undefined;
+}) {
   const [sorting, setSorting] = React.useState<SortingState>([]);
   const [pagination, setPagination] = React.useState({
     pageIndex: 0,
@@ -186,7 +192,11 @@ export function DataTable({ layer }: { layer: Layer }) {
           </DropdownMenuContent>
         </DropdownMenu>
         <div className="flex-1 text-sm text-muted-foreground">
-          Page {pagination.pageIndex + 1} of {table.getPageCount()}
+          {attributionTitle || (
+            <>
+              Page {pagination.pageIndex + 1} of {table.getPageCount()}
+            </>
+          )}
         </div>
         <div className="space-x-2">
           <Button

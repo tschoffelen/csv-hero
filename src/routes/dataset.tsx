@@ -79,6 +79,7 @@ export const Dataset = () => {
             <div className="border border-zinc-200 overflow-hidden rounded-md bg-white h-[640px] text-sm">
               {preview ? (
                 <DataTable
+                  attributionTitle={`Preview of first ${preview.length} rows`}
                   layer={{
                     columns: metadata.schema.reduce((acc, { name, type }) => {
                       acc.set(name, type);
