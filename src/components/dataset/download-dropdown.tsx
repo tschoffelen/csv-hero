@@ -1,4 +1,4 @@
-import { SaveIcon, Share2Icon } from "lucide-react";
+import { DownloadIcon } from "lucide-react";
 
 import {
   DropdownMenu,
@@ -13,10 +13,10 @@ import { Button } from "@/components/ui/button";
 export const DownloadDropdown = ({ links }) => {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <Button>
-          <Share2Icon />
-          Export data
+      <DropdownMenuTrigger asChild>
+        <Button className="ml-auto">
+          Access data
+          <DownloadIcon />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent>

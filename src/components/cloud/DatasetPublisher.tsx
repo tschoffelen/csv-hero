@@ -1,4 +1,5 @@
-import { Button } from "@/components/ui/button";
+import { useState } from "react";
+
 import {
   Dialog,
   DialogContent,
@@ -7,14 +8,17 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { uploadPart } from "@/utils/cloud";
 import { getResult } from "@/utils/download";
-import { useState } from "react";
+import { BoxIcon } from "lucide-react";
 
-export const DatasetPublisher = ({ layers }) => {
+import { Layer } from "@/lib/layers/Layer";
+
+export const DatasetPublisher = ({ layers }: { layers: Layer[] }) => {
   const [loading, setLoading] = useState(false);
 
   if (!layers?.length) return null;
@@ -86,6 +90,7 @@ export const DatasetPublisher = ({ layers }) => {
         statistics: {
           rows: data.length,
           columns: layers[layers.length - 1].columns.size,
+          createdAt: new Date().toISOString(),
         },
       };
 
@@ -108,7 +113,11 @@ export const DatasetPublisher = ({ layers }) => {
 
   return (
     <Dialog>
-      <DialogTrigger>Open</DialogTrigger>
+      <DialogTrigger>
+        <button className="px-3 py-3 ml-1.5 text-sm font-medium text-white bg-indigo-700 hover:bg-indigo-800 transition rounded-md">
+          <BoxIcon className="w-4 h-4" />
+        </button>
+      </DialogTrigger>
       <DialogContent className="max-w-4xl max-h-[calc(100vh-6rem)] overflow-auto">
         <DialogHeader>
           <DialogTitle>Publish dataset</DialogTitle>
