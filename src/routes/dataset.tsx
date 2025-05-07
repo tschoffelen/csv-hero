@@ -41,10 +41,10 @@ export const Dataset = () => {
         <div className="font-bold uppercase text-xs text-zinc-500">
           Data set
         </div>
-          <h1 className="font-bold text-2xl md:text-4xl text-zinc-900 flex-1">
-            {metadata.title}
-          </h1>
-        <div className="flex flex-wrap gap-6 md:gap-9 mt-6 mb-10 bg-neutral-100 p-5 rounded-lg">
+        <h1 className="font-bold text-2xl md:text-4xl text-zinc-900 flex-1">
+          {metadata.title}
+        </h1>
+        <div className="flex flex-wrap items-center gap-6 md:gap-9 mt-6 mb-10 bg-neutral-100 p-5 rounded-lg">
           <div>
             <h3 className="text-xs font-medium text-zinc-500">Rows</h3>
             <p className="text-lg font-medium text-zinc-900">
@@ -60,7 +60,9 @@ export const Dataset = () => {
           <div>
             <h3 className="text-xs font-medium text-zinc-500">Uploaded</h3>
             <p className="text-lg font-medium text-zinc-900">
-              {new Date(metadata.statistics.createdAt || '').toLocaleDateString()}
+              {new Date(
+                metadata.statistics.createdAt || ""
+              ).toLocaleDateString()}
             </p>
           </div>
           <DownloadDropdown links={metadata.links} />
@@ -91,22 +93,19 @@ export const Dataset = () => {
             </div>
           </TabsContent>
           <TabsContent value="structure">
-          <table className="w-full border-t border-gray-100 text-sm">
-            {metadata.schema
-              .map(({name, type, description}) => (
+            <table className="w-full border-t border-gray-100 text-sm">
+              {metadata.schema.map(({ name, type, description }) => (
                 <tr key={name} className="border-b border-gray-100">
                   <td className="text-left align-top pr-3 py-3">
                     <div className="font-mono">{name}</div>
-                    <div className="text-gray-500 text-xs mt-0.5">
-                      {type}
-                    </div>
+                    <div className="text-gray-500 text-xs mt-0.5">{type}</div>
                   </td>
                   <td className="w-full p-3 pr-0 prose prose-sm">
-                  <Markdown>{description}</Markdown>
+                    <Markdown>{description}</Markdown>
                   </td>
                 </tr>
               ))}
-          </table>
+            </table>
           </TabsContent>
         </Tabs>
       </div>
