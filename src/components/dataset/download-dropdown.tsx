@@ -56,6 +56,13 @@ export const DownloadDropdown = ({ links }) => {
             Open in Datasette...
           </a>
         </DropdownMenuItem>
+        {links.csvhero && (
+          <DropdownMenuItem asChild>
+            <a href={`https://csvhero.app/${links.csvhero}`} target="_blank">
+              Open in CSV Hero...
+            </a>
+          </DropdownMenuItem>
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

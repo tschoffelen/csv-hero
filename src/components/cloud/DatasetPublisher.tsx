@@ -54,6 +54,15 @@ export const DatasetPublisher = ({ layers }: { layers: Layer[] }) => {
           "data.json",
           "application/json"
         ),
+        csvhero: await uploadPart(
+          JSON.stringify({
+            data,
+            name: formData.get("title"),
+            transforms: [],
+          }),
+          "csvhero.json",
+          "application/json"
+        ),
         csv: await uploadPart(
           getResult(data, "csv").content,
           "data.csv",
