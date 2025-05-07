@@ -18,10 +18,13 @@ export const Dataset = () => {
     (async () => {
       const { data } = await axios.get(`https://mirri.link/${id}`);
       setMetadata(data);
+
       const { data: preview } = await axios.get(
         `${data.links.baseUrl}${data.links.preview}`
       );
       setPreview(preview);
+
+      document.title = `Dataset: ${data.title}`;
     })();
   }, [id]);
 
@@ -32,8 +35,6 @@ export const Dataset = () => {
       </div>
     );
   }
-
-  console.log(metadata.schema.map(({ name }) => name));
 
   return (
     <>
